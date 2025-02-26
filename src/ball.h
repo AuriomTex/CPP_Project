@@ -3,7 +3,7 @@
 class Ball
 {
 public:
-    Ball();
+    Ball(int x, int y);
     void Update();
     void Draw() const;
 
