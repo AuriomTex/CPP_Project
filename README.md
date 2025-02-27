@@ -13,7 +13,7 @@ The game logic and structure are based on the template provided by [tupini07/ray
 ## Gameplay
 
 - The player controls a character that moves on the screen.
-- Various geometric objects (e.g., squares, circles) fall from the top of the screen.
+- Various geometric objects (e.g., squares, circles) bounce random from the top of the screen.
 - The goal is to avoid these objects and survive for as long as possible to achieve a high score.
 - The longer you survive, the more challenging the game becomes.
 - When you get hit by an object, the game ends. You can press any key to restart the game.
