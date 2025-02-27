@@ -1,10 +1,9 @@
 #pragma once
 
-class Ball
+class Player
 {
 public:
-    Ball(int x, int y, int speedX, int speedY, int radius);
-    void Update();
+    Player();
     void Draw() const;
 
 private:
@@ -12,5 +11,4 @@ private:
     int y;
     int speedX;
     int speedY;
-    int radius;
 };
