@@ -1,39 +1,68 @@
 #include <raylib.h>
+#include <vector>
+#include <chrono>
 #include "ball.h"
-
-double lastUpdateTime = 0;
-
-bool EventTriggered(double interval)
-{
-    double currentTime = GetTime();
-    if (currentTime - lastUpdateTime >= interval)
-    {
-        lastUpdateTime = currentTime;
-        return true;
-    }
-    return false;
-}
+#include "player.h"
 
 int main()
 {
-    const Color darkGreen = {20, 160, 133, 255};
+    const Color darkBlue = {0, 0, 139, 255};
+    const Color lightBlue = {173, 216, 230, 255};
+    constexpr int screenWidth = 1000;
+    constexpr int screenHeight = 1000;
 
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 600;
-
-    Ball ball(100, 100);
-    Ball newBall(700, 500);
-
-    InitWindow(screenWidth, screenHeight, "Dodging Objects");
+    InitWindow(screenWidth, screenHeight, "Geometry Dodge");
     SetTargetFPS(60);
+
+    int randomX = 0;
+    int randomY = 0;
+    int randomSpeedX = 0;
+    int randomSpeedY = 0;
+    int randomRadius = 0;
+
+    int fontSize = 40;
+    int score = 0;
+
+    std::vector<Ball> balls;
+
+    auto lastSpawnTime = std::chrono::steady_clock::now();
+    constexpr std::chrono::seconds spawnInterval(1); // 1 seconds interval
 
     while (!WindowShouldClose())
     {
+        // Check if 10 seconds have passed
+        auto currentTime = std::chrono::steady_clock::now();
+        if (currentTime - lastSpawnTime >= spawnInterval)
+        {
+            randomX = GetRandomValue(300, screenWidth -300);
+            randomY = GetRandomValue(300, screenHeight - 500);
+            randomSpeedX = GetRandomValue(-5, 5);
+            randomSpeedY = GetRandomValue(-5, 5);
+            randomRadius = GetRandomValue(5, 25);
+            balls.push_back(Ball(randomX, randomY, randomSpeedX, randomSpeedY, randomRadius)); // Spawn a new ball
+            lastSpawnTime = currentTime; // Update the spawn time
+        }
+
+        // Update and draw all balls
+        for (auto& ball : balls)
+        {
+            ball.Update();
+        }
+
+        score++;
 
         BeginDrawing();
-        ClearBackground(darkGreen);
-        ball.Draw();
-        newBall.Draw();
+        ClearBackground(darkBlue);
+
+        DrawRectangle(0, 0, screenWidth, 200, lightBlue);
+
+        DrawTextEx(GetFontDefault(), TextFormat("Score: %d", score), (Vector2){20, 10}, fontSize, 2, darkBlue);
+
+        for (const auto& ball : balls)
+        {
+            ball.Draw();
+        }
+
         EndDrawing();
     }
 
