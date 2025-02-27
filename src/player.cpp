@@ -2,7 +2,7 @@
 #include <raylib.h>
 
 Player::Player()
-    : x(900)
+    : x(500)
     , y(900)
     , speedX(5)
     , speedY(5)
@@ -11,5 +11,5 @@ Player::Player()
 
 void Player::Draw() const
 {
-    DrawTexture();
+    //DrawTexture();
 }

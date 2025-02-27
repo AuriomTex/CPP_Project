@@ -30,12 +30,12 @@ int main()
 
     while (!WindowShouldClose())
     {
-        // Check if 10 seconds have passed
+        // Check if 1 second have passed
         auto currentTime = std::chrono::steady_clock::now();
         if (currentTime - lastSpawnTime >= spawnInterval)
         {
-            randomX = GetRandomValue(300, screenWidth -300);
-            randomY = GetRandomValue(300, screenHeight - 500);
+            randomX = GetRandomValue(26, screenWidth - 26);
+            randomY = GetRandomValue(226, 350);
             randomSpeedX = GetRandomValue(-5, 5);
             randomSpeedY = GetRandomValue(-5, 5);
             randomRadius = GetRandomValue(5, 25);
