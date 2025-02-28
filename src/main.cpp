@@ -23,6 +23,8 @@ int main()
     int fontSize = 40;
     int score = 0;
 
+    Player player;
+
     std::vector<Ball> balls;
 
     auto lastSpawnTime = std::chrono::steady_clock::now();
@@ -57,6 +59,8 @@ int main()
         DrawRectangle(0, 0, screenWidth, 200, lightBlue);
 
         DrawTextEx(GetFontDefault(), TextFormat("Score: %d", score), (Vector2){20, 10}, fontSize, 2, darkBlue);
+
+        player.Draw();
 
         for (const auto& ball : balls)
         {

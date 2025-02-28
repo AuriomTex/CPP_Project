@@ -7,9 +7,15 @@ Player::Player()
     , speedX(5)
     , speedY(5)
 {
+    playerDown = LoadTexture("../assets/Sprite/SpritesC++/PlayerDown.png");
+}
+
+Player::~Player()
+{
+    UnloadTexture(playerDown);  // Textur wieder freigeben beim Zerstören des Objekts
 }
 
 void Player::Draw() const
 {
-    //DrawTexture();
+    DrawTexture(playerDown, x, y, WHITE);
 }

@@ -4,6 +4,8 @@ class Player
 {
 public:
     Player();
+    ~Player();
+
     void Draw() const;
 
 private:
@@ -11,4 +13,5 @@ private:
     int y;
     int speedX;
     int speedY;
+    Texture2D playerDown;
 };
