@@ -38,20 +38,18 @@ int main()
     while (!WindowShouldClose())
     {
 
-        playerAlive = true;
-
         for (const auto& ball : balls)
         {
             if (CheckCollisionCircleRec(ball.GetPosition(), ball.GetRadius(), player.GetHitbox()))
             {
-                playerAlive = false;
+                player.PlayerGotHit();
                 break;
             }
         }
 
         if (!playerAlive)
         {
-            DrawText("GAME OVER", screenWidth / 2 - 100, 50, 50, RED);
+            DrawText("GAME OVER", screenWidth / 2, 100, 50, RED);
             EndDrawing();
             continue;
         }
@@ -71,6 +69,7 @@ int main()
         playerX = player.GetX();
         playerY = player.GetY();
         playerAlive = player.GetAlive();
+        if(playerAlive)score++;
 
 
         // Update and draw all balls
@@ -78,8 +77,6 @@ int main()
         {
             ball.Update(playerX, playerY);
         }
-
-        score++;
 
         BeginDrawing();
         ClearBackground(darkBlue);
