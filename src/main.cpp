@@ -22,6 +22,9 @@ int main()
 
     int fontSize = 40;
     int score = 0;
+    int playerX = 0;
+    int playerY = 0;
+    bool playerAlive = true;
 
     Player player;
 
@@ -30,9 +33,29 @@ int main()
     auto lastSpawnTime = std::chrono::steady_clock::now();
     constexpr std::chrono::seconds spawnInterval(1); // 1 seconds interval
 
+    player.Init();
+
     while (!WindowShouldClose())
     {
-        // Check if 1 second have passed
+
+        playerAlive = true;
+
+        for (const auto& ball : balls)
+        {
+            if (CheckCollisionCircleRec(ball.GetPosition(), ball.GetRadius(), player.GetHitbox()))
+            {
+                playerAlive = false;
+                break;
+            }
+        }
+
+        if (!playerAlive)
+        {
+            DrawText("GAME OVER", screenWidth / 2 - 100, 50, 50, RED);
+            EndDrawing();
+            continue;
+        }
+
         auto currentTime = std::chrono::steady_clock::now();
         if (currentTime - lastSpawnTime >= spawnInterval)
         {
@@ -45,10 +68,15 @@ int main()
             lastSpawnTime = currentTime; // Update the spawn time
         }
 
+        playerX = player.GetX();
+        playerY = player.GetY();
+        playerAlive = player.GetAlive();
+
+
         // Update and draw all balls
         for (auto& ball : balls)
         {
-            ball.Update();
+            ball.Update(playerX, playerY);
         }
 
         score++;
@@ -61,6 +89,11 @@ int main()
         DrawTextEx(GetFontDefault(), TextFormat("Score: %d", score), (Vector2){20, 10}, fontSize, 2, darkBlue);
 
         player.Draw();
+
+        if(IsKeyDown(KEY_RIGHT)) player.Update();
+        if(IsKeyDown(KEY_LEFT)) player.Update();
+        if(IsKeyDown(KEY_UP)) player.Update();
+        if(IsKeyDown(KEY_DOWN)) player.Update();
 
         for (const auto& ball : balls)
         {

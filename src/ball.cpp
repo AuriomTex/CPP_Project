@@ -1,5 +1,7 @@
 #include "ball.h"
+#include "player.h"
 #include <raylib.h>
+#include <iostream>
 
 Ball::Ball(int x, int y, int speedX, int speedY, int radius)
     : x(x)
@@ -10,7 +12,7 @@ Ball::Ball(int x, int y, int speedX, int speedY, int radius)
 {
 }
 
-void Ball::Update() 
+void Ball::Update(int px, int py)
 {
     x += speedX;
     y += speedY;
@@ -30,5 +32,15 @@ void Ball::Update()
 void Ball::Draw() const
 {
     DrawCircle(x, y, radius, WHITE);
+}
+
+Vector2 Ball::GetPosition() const
+{
+    return Vector2{ (float)x, (float)y };
+}
+
+float Ball::GetRadius() const
+{
+    return (float)radius;
 }
 
