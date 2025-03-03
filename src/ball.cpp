@@ -12,7 +12,7 @@ Ball::Ball(int x, int y, int speedX, int speedY, int radius)
 {
 }
 
-void Ball::Update(int px, int py)
+void Ball::Update()
 {
     x += speedX;
     y += speedY;

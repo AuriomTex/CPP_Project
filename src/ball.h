@@ -7,7 +7,7 @@ class Ball
 {
 public:
     Ball(int x, int y, int speedX, int speedY, int radius);
-    void Update(int px, int py);
+    void Update();
     void Draw() const;
     Vector2 GetPosition() const;
     float GetRadius() const;

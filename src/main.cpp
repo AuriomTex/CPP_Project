@@ -3,6 +3,17 @@
 #include <chrono>
 #include "ball.h"
 #include "player.h"
+#include "square.h"
+#include "triangle.h"
+
+void ResetGame(Player& player, std::vector<Ball>& balls, std::vector<Square>& squares, std::vector<Triangle>& triangles, int& score)
+{
+    player.SetAlive();
+    balls.clear();
+    squares.clear();
+    triangles.clear();
+    score = 0;
+}
 
 int main()
 {
@@ -14,30 +25,90 @@ int main()
     InitWindow(screenWidth, screenHeight, "Geometry Dodge");
     SetTargetFPS(60);
 
-    int randomX = 0;
-    int randomY = 0;
-    int randomSpeedX = 0;
-    int randomSpeedY = 0;
-    int randomRadius = 0;
-
-    int fontSize = 40;
-    int score = 0;
-    int playerX = 0;
-    int playerY = 0;
-    bool playerAlive = true;
-
     Player player;
+    player.Init();
 
     std::vector<Ball> balls;
+    std::vector<Square> squares;
+    std::vector<Triangle> triangles;
 
-    auto lastSpawnTime = std::chrono::steady_clock::now();
-    constexpr std::chrono::seconds spawnInterval(1); // 1 seconds interval
+    auto lastBallSpawnTime = std::chrono::steady_clock::now();
+    auto lastSquareSpawnTime = std::chrono::steady_clock::now();
+    auto lastTriangleSpawnTime = std::chrono::steady_clock::now();
 
-    player.Init();
+    constexpr std::chrono::seconds spawnBallInterval(2);
+    constexpr std::chrono::seconds spawnSquareInterval(5);
+    constexpr std::chrono::seconds spawnTriangleInterval(9);
+
+    int score = 0;
+    int fontSize = 40;
 
     while (!WindowShouldClose())
     {
+        if (!player.GetAlive()) // Spieler tot -> Game Over Screen + Restart-Option
+        {
+            BeginDrawing();
+            ClearBackground(darkBlue);
+            DrawRectangle(0, 0, screenWidth, 200, lightBlue);
 
+            DrawText("GAME OVER", screenWidth / 2 - 150, 300, 50, RED);
+            DrawText("Press [R] to Restart", screenWidth / 2 - 200, 400, 40, WHITE);
+            DrawText(TextFormat("Final Score: %d", score), screenWidth / 2 - 150, 500, 40, WHITE);
+
+            EndDrawing();
+
+            if (IsKeyPressed(KEY_R))
+            {
+                ResetGame(player, balls, squares, triangles, score);
+                lastBallSpawnTime = std::chrono::steady_clock::now();
+                lastSquareSpawnTime = std::chrono::steady_clock::now();
+                lastTriangleSpawnTime = std::chrono::steady_clock::now();
+            }
+            continue;
+        }
+
+        // --- Spiellogik ---
+        auto currentTime = std::chrono::steady_clock::now();
+
+        if (currentTime - lastBallSpawnTime >= spawnBallInterval)
+        {
+            balls.emplace_back(GetRandomValue(16, screenWidth - 16),
+                               GetRandomValue(216, 350),
+                               GetRandomValue(-2, 2),
+                               GetRandomValue(-2, 2),
+                               GetRandomValue(5, 15));
+            lastBallSpawnTime = currentTime;
+        }
+
+        if (currentTime - lastSquareSpawnTime >= spawnSquareInterval)
+        {
+            int randomSize = GetRandomValue(50, 100);
+            squares.emplace_back(GetRandomValue(randomSize + 1, screenWidth - randomSize - 1),
+                                 GetRandomValue(200 + randomSize + 1, 350 - randomSize - 1),
+                                 GetRandomValue(-2, 2),
+                                 GetRandomValue(-2, 2),
+                                 randomSize);
+            lastSquareSpawnTime = currentTime;
+        }
+
+        if (currentTime - lastTriangleSpawnTime >= spawnTriangleInterval)
+        {
+            int randomSize = GetRandomValue(20, 50);
+            triangles.emplace_back(GetRandomValue(randomSize / 2 + 1, screenWidth - randomSize / 2 - 1),
+                                   GetRandomValue(200 + randomSize / 2 + 1, 350 - randomSize / 2 - 1),
+                                   GetRandomValue(-7, 7),
+                                   GetRandomValue(-7, 7),
+                                   randomSize);
+            lastTriangleSpawnTime = currentTime;
+        }
+
+        // Objekte updaten
+        for (auto& ball : balls) ball.Update();
+        for (auto& square : squares) square.Update();
+        for (auto& triangle : triangles) triangle.Update();
+        player.Update();
+
+        // Kollisionen prüfen
         for (const auto& ball : balls)
         {
             if (CheckCollisionCircleRec(ball.GetPosition(), ball.GetRadius(), player.GetHitbox()))
@@ -47,58 +118,43 @@ int main()
             }
         }
 
-        if (!playerAlive)
+        for (const auto& square : squares)
         {
-            DrawText("GAME OVER", screenWidth / 2, 100, 50, RED);
-            EndDrawing();
-            continue;
+            if (CheckCollisionRecs(square.GetHitbox(), player.GetHitbox()))
+            {
+                player.PlayerGotHit();
+                break;
+            }
         }
 
-        auto currentTime = std::chrono::steady_clock::now();
-        if (currentTime - lastSpawnTime >= spawnInterval)
+        for (const auto& triangle : triangles)
         {
-            randomX = GetRandomValue(26, screenWidth - 26);
-            randomY = GetRandomValue(226, 350);
-            randomSpeedX = GetRandomValue(-5, 5);
-            randomSpeedY = GetRandomValue(-5, 5);
-            randomRadius = GetRandomValue(5, 25);
-            balls.push_back(Ball(randomX, randomY, randomSpeedX, randomSpeedY, randomRadius)); // Spawn a new ball
-            lastSpawnTime = currentTime; // Update the spawn time
+            if (triangle.CheckCollision(player.GetHitbox()))
+            {
+                player.PlayerGotHit();
+                break;
+            }
         }
 
-        playerX = player.GetX();
-        playerY = player.GetY();
-        playerAlive = player.GetAlive();
-        if(playerAlive)score++;
+        if (player.GetAlive())
+            score++;
 
-
-        // Update and draw all balls
-        for (auto& ball : balls)
-        {
-            ball.Update(playerX, playerY);
-        }
-
+        // --- Zeichnen ---
         BeginDrawing();
         ClearBackground(darkBlue);
-
         DrawRectangle(0, 0, screenWidth, 200, lightBlue);
 
         DrawTextEx(GetFontDefault(), TextFormat("Score: %d", score), (Vector2){20, 10}, fontSize, 2, darkBlue);
 
         player.Draw();
 
-        if(IsKeyDown(KEY_RIGHT)) player.Update();
-        if(IsKeyDown(KEY_LEFT)) player.Update();
-        if(IsKeyDown(KEY_UP)) player.Update();
-        if(IsKeyDown(KEY_DOWN)) player.Update();
-
-        for (const auto& ball : balls)
-        {
-            ball.Draw();
-        }
+        for (const auto& ball : balls) ball.Draw();
+        for (const auto& square : squares) square.Draw();
+        for (const auto& triangle : triangles) triangle.Draw();
 
         EndDrawing();
     }
 
     CloseWindow();
+    return 0;
 }
