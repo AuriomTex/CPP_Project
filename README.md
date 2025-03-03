@@ -27,3 +27,17 @@ The game logic and structure are based on the template provided by [tupini07/ray
 - **R**: Press to restart the game after a game over
 
 ## Installation
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/AuriomTex/CPP_Project.git
+   cd CPP_Project
+   ```
+
+2. **Run the Game**:
+
+   ```bash
+   cd build
+   ./CPP_Project.exe
+   ```
