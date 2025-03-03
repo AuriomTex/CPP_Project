@@ -24,4 +24,6 @@ The game logic and structure are based on the template provided by [tupini07/ray
 - **A**: Move left
 - **S**: Move down
 - **D**: Move right
-- **Any Key**: Press to restart the game after a game over
+- **R**: Press to restart the game after a game over
+
+## Installation
