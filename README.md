@@ -9,6 +9,7 @@ In **Geometry Dodge**, the player controls a character that must avoid colliding
 This game is built using C++ and the Raylib library, a simple and easy-to-use game development library for creating 2D games. The project was created as part of my computer science course.
 
 The game logic and structure are based on the template provided by [tupini07/raylib-cpp-cmake-template](https://github.com/tupini07/raylib-cpp-cmake-template/tree/main).
+The sprites of the character are from a template provided on itch.io: https://gibbongl.itch.io/8-directional-gameboy-character-template.
 
 ## Gameplay
 
