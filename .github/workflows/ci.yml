@@ -3,10 +3,20 @@ name: C++ CI
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      question:
+        description: "Start Build"
+        required: false
+        type: choise
+        default: "yes"
+        options:
+          - "yes"
+          - "no"
 
 jobs:
   build:
