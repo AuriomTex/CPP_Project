@@ -1,0 +1,40 @@
+name: C++ CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: Windons-latest
+
+    steps:
+      # Checkout des Repositories
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Setup von CMake und Build-Tools
+      - name: Set up CMake
+        uses: cmake/setup-cmake@v3
+
+      # Setup von Build-Tools
+      - name: Set up build tools
+        run: sudo apt-get install -y build-essential
+
+      # Erstellen eines Build-Verzeichnisses und Bauen des Projekts
+      - name: Build project
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+
+      # Tests ausführen (optional, falls du Tests definiert hast)
+      - name: Run tests
+        run: |
+          cd build
+          make test
