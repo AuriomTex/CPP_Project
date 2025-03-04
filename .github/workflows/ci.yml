@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: Windons-latest
+    runs-on: windows-latest
 
     steps:
       # Checkout des Repositories
@@ -33,8 +33,32 @@ jobs:
           cmake ..
           make
 
-      # Tests ausführen (optional, falls du Tests definiert hast)
-      - name: Run tests
-        run: |
-          cd build
-          make test
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-build
+          path: build
+
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    name: Release
+    permissions: write-all
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: windows-build
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+          draft: false
+          prerelease: false
